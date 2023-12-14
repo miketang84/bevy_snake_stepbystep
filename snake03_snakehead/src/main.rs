@@ -8,9 +8,9 @@ struct SnakeHead;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_startup_system(setup_camera)
-        .add_startup_system(spawn_snake)
+        .add_systems(Startup, (setup_camera, spawn_snake))
         .run();
+
 }
 
 fn setup_camera(mut commands: Commands) {

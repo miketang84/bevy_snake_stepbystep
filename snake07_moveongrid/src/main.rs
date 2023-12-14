@@ -35,10 +35,8 @@ impl Size {
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_startup_system(setup_camera)
-        .add_startup_system(spawn_snake)
-        .add_system(snake_movement)
-        .add_systems( (position_translation,size_scaling) )
+        .add_systems(Startup, (setup_camera, spawn_snake))
+        .add_systems(Update, (snake_movement, size_scaling, position_translation))
         .run();
 }
 

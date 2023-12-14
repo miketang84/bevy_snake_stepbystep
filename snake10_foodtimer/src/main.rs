@@ -5,8 +5,12 @@ use rand::prelude::random;
 const SNAKE_HEAD_COLOR: Color = Color::rgb(0.7, 0.7, 0.7);
 // const SNAKE_SEGMENT_COLOR: Color = Color::rgb(0.3, 0.3, 0.3);
 const FOOD_COLOR: Color = Color::rgb(1.0, 0.0, 1.0);
-const ARENA_WIDTH: u32 = 10;
-const ARENA_HEIGHT: u32 = 10;
+const ARENA_WIDTH: u32 = 20;
+const ARENA_HEIGHT: u32 = 20;
+
+
+#[derive(Resource)]
+struct FoodSpawnTimer(Timer);
 
 
 #[derive(Component)]
@@ -14,10 +18,6 @@ struct SnakeHead;
 
 #[derive(Component)]
 struct Food;
-
-#[derive(Resource)]
-struct FoodSpawnTimer(Timer);
-
 
 #[derive(Component, Clone, Copy, PartialEq, Eq)]
 struct Position {
@@ -59,11 +59,9 @@ fn main() {
             1.0,
             TimerMode::Repeating,
         )))
-        .add_startup_system(setup_camera)
-        .add_startup_system(spawn_snake)
-        .add_system(snake_movement)
-        .add_system( food_spawner )
-        .add_systems( (position_translation,size_scaling) )
+        .add_systems(Startup, (setup_camera, spawn_snake))
+        .add_systems(Update, (snake_movement, size_scaling, position_translation))
+        .add_systems(Update, food_spawner)
         .run();
 }
 
@@ -94,16 +92,16 @@ fn snake_movement(
     mut head_positions: Query<&mut Position, With<SnakeHead>>,
 ) {
     for mut pos in head_positions.iter_mut() {
-        if keyboard_input.pressed(KeyCode::Left) {
+        if keyboard_input.just_pressed(KeyCode::Left) {
             pos.x -= 1;
         }
-        if keyboard_input.pressed(KeyCode::Right) {
+        if keyboard_input.just_pressed(KeyCode::Right) {
             pos.x += 1;
         }
-        if keyboard_input.pressed(KeyCode::Down) {
+        if keyboard_input.just_pressed(KeyCode::Down) {
             pos.y -= 1;
         }
-        if keyboard_input.pressed(KeyCode::Up) {
+        if keyboard_input.just_pressed(KeyCode::Up) {
             pos.y += 1;
         }
     }
